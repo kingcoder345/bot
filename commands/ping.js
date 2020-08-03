@@ -1,29 +1,27 @@
 const Discord = require("discord.js");
+const config = require("../data/config.json");
 
-module.exports.run = async (client, message, args) => {
+module.exports.run = async (message, args, bot, emotes, data) => {
+    
+    message.channel.send(emotes[1]+' Pong ! Ma latence est de `' + `0.000000` + '` ms !').then(m => {
+        m.edit(emotes[1]+' | Pong ! Ma latence est de `' + `${Date.now() - m.createdTimestamp}` + '` ms !');
+    });
 
-
-
-    let msgping1 = new Date();
-
-    let botping = new Date() - message.createdAt;
-
-    let msgping2 = new Date() - msgping1;
-
-    let pingembed = new Discord.MessageEmbed()
-        .setColor("RANDOM")
-        .addField('API Ping : ', Math.floor(client.ws.ping) + 'ms')
-        .addField('Bot Ping : ', Math.floor(botping) + 'ms')
-        .addField('Message Ping : ', '~' + Math.round(msgping2) + 'ms')
-        .setTimestamp(new Date())
-        .setFooter(`requested by ${message.author.tag}`);
-
-
-    return message.channel.send(pingembed);
-
-
-};
+}
 
 module.exports.help = {
-    name: "ping"
-};
+    name:"ping",
+    desc:"Envoie ma latence en millisecondes !",
+    usage:"ping",
+    group:"général",
+    examples:"$ping\n$ping [ms]"
+}
+
+module.exports.settings = {
+    permissions:"false",
+    nsfw:"false",
+    support_only:"false",
+    disabled:"false",
+    premium:"false",
+    owner:"false"
+}

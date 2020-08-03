@@ -1,36 +1,43 @@
-var figlet = require('figlet');
-const Discord = require('discord.js');
+const Discord = require("discord.js");
+const config = require("../data/config.json")
+quickdb = require('quick.db'),
+errors = require('../utils/errors.js'),
+ms = require('ms'),
+functions = require('../utils/functions.js');
+const figlet = require('figlet');
 
-module.exports.run = async (client,  message, args) => {
 
-  var maxLen = 100 // Kendiniz en yüksek harf sayısını ayarlayabilirsiniz
+quickdb.init('./data/atlanta.sqlite');
 
-  if(args.join(' ').length > maxLen) return message.channel.send(`En fazla ${maxLen} karakter yazabilirsin!`)
-
-  if(!args[0]) return message.channel.send('Lütfen bir yazı girin...');
-
-  figlet(`${args.join(' ')}`, function(err, data) {
-      if (err) {
-          console.log('Bir hata var...');
-          console.dir(err);
-          return;
-      }
-
-      message.channel.send(`${data}`, {code: 'AsciiArt'});
-  });
-
+module.exports.run = async (message, args, bot, emotes, data) => {
+    
+    if(!args[0]) return errors.utilisation(message, data, emotes);
+    if(args.join(' ').length > 20){
+        return message.reply('trop de caractères....')
+    }
+    figlet(args.join(' '), function(err, rdata) {
+        if (err) {
+            message.reply('une erreur est survenue pendant la conversion...');
+            return;
+        }
+        message.channel.send('```' + rdata + '```');
+    });
 
 }
 
-exports.conf = {
-  enabled: true,
-  guildOnly: false,
-  aliases: [],
-  permLevel: 0
-};
+module.exports.help = {
+    name:"ascii",
+    desc:"Transforme votre texte en version ASCII",
+    usage:"ascii [texte]",
+    group:"fun",
+    examples:"$ascii Hello\n$ascii YourName"
+}
 
-exports.help = {
-  name: 'ascii',
-  description: '',
-  usage: 'ascii'
-};
+module.exports.settings = {
+    permissions:"false",
+    nsfw:"false",
+    support_only:"false",
+    disabled:"false",
+    premium:"false",
+    owner:"false"
+}

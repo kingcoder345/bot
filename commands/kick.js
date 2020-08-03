@@ -1,29 +1,51 @@
 const Discord = require("discord.js");
+const config = require("../data/config.json")
+quickdb = require('quick.db'),
+errors = require('../utils/errors.js'),
+ms = require('ms'),
+functions = require('../utils/functions.js');
 
-module.exports.run = async (client,  message, args) => {
-let kUser =  message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-  if(!kUser) return message.channel.send("Cant find user!");
-  let kReason = args.join(" ").slice(22);
-  if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("Oof it seems like you no has da perms! please try again soon or when you have the perms.");
-  if(kUser.hasPermission("MANAGE_MESSAGES")) return message.channel.send("You can't kick that person! Only in your dreams..");
+quickdb.init('./data/atlanta.sqlite');
+var users_data = new quickdb.table('usersdata');
 
-  let kickEmbed = new Discord.MessageEmbed()
-   .setDescription("**Kick**")
-   .setColor("#e26ce1")
-   .addField("Kicked User", `${kUser} With ID: ${kUser.id}`)
-   .addField("Reason", kReason)
-   .addField("Kicked By", `<@${message.author.id}> with ID: ${message.author.id}`)
-   .addField("Kicked in", message.channel)
-   .setTimestamp()
-   .setFooter("Command Ran By: " + message.author.username, message.author.avatarURL);
+module.exports.run = async (message, args, bot, emotes, data) => {
 
-   let kickChannel = message.guild.channels.find(`name`, "logs");
-   if(!kickChannel) return message.channel.send("Cant find logs channel.");
+    message.delete();
 
-   message.guild.member(kUser).kick(kReason);
-   kickChannel.send(kickEmbed);
+    var the_member = message.mentions.members.first();
 
+    if(!the_member)
+        return errors.utilisation(message, data, emotes);
+
+    if(!the_member.kickable)
+        return message.channel.send(emotes[0] + " | Une erreur est survenue. Ais-je bien un rôle supérieur à " + the_member + " ?");
+
+    let raison = args.slice(1).join(' ');
+    if(!raison) raison = "Pas de raison donnée.";
+    raison = raison + ' | Expulsé par ' + message.author.username;
+
+    the_member.kick(raison);
+
+    message.channel.send(emotes[1] + ' | '+the_member.user.username+' a bien été expulsé du serveur !')
+
+    var the_channel = message.guild.channels.get(data.guild_data.logs_plugin.channel);
+    
+    if(the_channel) return the_channel.send('**'+the_member.user.username + '#'+the_member.user.discriminator+'** expulsé par **'+message.author.username+'#'+message.author.discriminator+'**');
 }
+
 module.exports.help = {
-  name: "kick"
+    name:"kick",
+    desc:"Expulse le membre mentionné avec la raison donnée !",
+    usage:"kick [@membre] (raison)",
+    group:"modération",
+    examples:"$kick @Androz#2425 Spam & Irrespect envers les modérateurs\n$kick @Androz#2425"
+}
+
+module.exports.settings = {
+    permissions:"KICK_MEMBERS",
+    nsfw:"false",
+    support_only:"false",
+    disabled:"false",
+    premium:"false",
+    owner:"false"
 }

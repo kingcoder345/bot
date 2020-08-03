@@ -1,28 +1,38 @@
-const Discord = require('discord.js');
+const Discord = require("discord.js");
+const config = require("../data/config.json")
+quickdb = require('quick.db'),
+errors = require('../utils/errors.js'),
+ms = require('ms'),
+functions = require('../utils/functions.js');
 
-module.exports.run = async (client, message, args) => {
+quickdb.init('./data/atlanta.sqlite');
 
-  if(!message.member.hasPermission("MANAGE_GUILD")) return message.reply("Sorry, you don't have permissions to use this!");
+module.exports.run = async (message, args, bot, emotes, data) => {
+    
+    var say_message = args.join(' ');
 
-    const sayMessage = args.join(" ");
+    if(!args[0]) return errors.utilisation(message, data, emotes);
 
-    let servIcon = message.guild.iconURL;
-    let esayEmbed = new Discord.MessageEmbed()
-    .setTitle("Announcement")
-    .setColor("RANDOM")
-    .setThumbnail(servIcon)
-    .setDescription(`Said by ${message.author}`)
-    .addField("Message", `${sayMessage}`)
-    .setTimestamp();
+    message.delete();
+    
+    message.channel.send('**'+message.author.username+'#'+message.author.discriminator+'** vient de dire :\n'+say_message);
+    
 
-    const esayMessage = args.join(" ");
-    // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
-    message.delete().catch(O_o=>{});
-    // And we get the bot to say the thing:
-
-    message.channel.send(esayEmbed);
 }
 
 module.exports.help = {
-  name: "say"
+    name:"say",
+    desc:"Faites dire ce que vous voulez au bot ! Premium Only",
+    usage:"say [text]",
+    group:"général",
+    examples:"$say Hello\n$say Je suis un bot"
+}
+
+module.exports.settings = {
+    permissions:"false",
+    nsfw:"false",
+    support_only:"false",
+    disabled:"false",
+    premium:"true",
+    owner:"false"
 }
