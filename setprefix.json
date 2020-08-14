@@ -1,0 +1,19 @@
+  const fs = require('fs');
+  const config = require('./config.json')
+
+
+////////////////////// Message handler
+  let args = message.content.split(' ').join(' ')
+  if(message.content.toLocaleLowerCase().startsWith('d!setprefix')){
+    if(!args[1]) return message.reply('Whats gonna be the new prefix?')
+    message.reply(`Prefix has been changed to ${args[1]}`)
+    config.prefix = args[1]
+    fs.writeFileSync('./config.json', JSON.stringify(config, null, 2));
+  }
+  /////////////////////////////////////////
+  //CONFIG FILE
+  /////////////////////////////////////////
+  {
+    "prefix": "$"
+  }
+ 
