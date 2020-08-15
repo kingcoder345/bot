@@ -1,0 +1,27 @@
+ok so when makeing a dev command
+when you wright the name part 
+make it 
+~name
+not just name
+
+and after 
+
+module.exports.run = async (bot, message, args) => {
+
+that part maked the bot send the message 
+
+after that part put this
+
+  if(!bot.devPerms.includes(message.author.id)) return message.reply("You are not a dev!")
+
+this is what makes command know you a dev 
+so if you go to config.json
+you devPerms if your id is in there the bot 
+thinks you are a dev and will send the message
+
+when making fhe file please use a : to represent a dec command
+
+if you have any more questions dm 
+me
+
+btw if there are anymore .txt in here please read them
