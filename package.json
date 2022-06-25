@@ -14,7 +14,7 @@
     "fortnitetracker-7days-stats": "^3.3.0",
     "fs": "^0.0.2",
     "morse-node": "^0.1.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "npm": "^6.13.6",
     "os-utils": "^0.0.14",
     "quick.db": "^6.3.2",
